@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<header>
+    <h1>Create new user</h1>
+</header>
+
+<main>
+    <form th:action="@{/owner/new}" method="post" th:object="${account}">
+
+        <div>
+            <label for="email">Email</label>
+            <input type="email" name="email" id="email" th:field="*{email}" placeholder="email@email.com" required>
+            <small th:if="${emailError}" th:text="${emailError}"></small>
+        </div>
+
+        <div>
+            <label for="lastname">Lastname</label>
+            <input type="text" name="lastname" id="lastname" th:field="*{lastname}" required>
+            <small th:if="${lastnameError}" th:text="${lastnameError}"></small>
+        </div>
+
+        <div>
+            <label for="firstname">Firsname</label>
+            <input type="text" name="firstname" id="firstname" th:field="*{firstname}">
+        </div>
+
+        <div>
+            <label for="tel">Phone number</label>
+            <input type="tel" name="" id="tel" th:field="*{phoneNumber}" required>
+            <small th:if="${phoneNumberError}" th:text="${phoneNumberError}"></small>
+        </div>
+
+        <div>
+            <label for="school-count">Number school</label>
+            <input type="number" name="school-count" id="school-count" th:field="*{authorizedSchool}" min="1" required>
+            <small th:if="${authorizedSchoolError}" th:text="${authorizedSchoolError}"></small>
+        </div>
+
+        <div>
+            <button type="submit">Create</button>
+        </div>
+
+    </form>
+</main>
+
+<footer>
+    Footer
+</footer>
+</body>
+</html>

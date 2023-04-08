@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: school
+  cloud:
+    vault:
+      host: localhost
+      port: 8200
+      scheme: http
+      kv-version: 2
+#      fail-fast: true
+#      uri: http://localhost:8200
+      authentication: TOKEN
+      token: hvs.93P09qBQZ0EWKO6AQDKkdhMd
+      kv:
+        enabled: true
+      generic:
+        enabled: true
+        application-name: sukulu
+    config:
+      import: vault://

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<header>
+    <h1>List of owners</h1>
+    <a th:href="@{/owner/new}">New Owner</a>
+</header>
+<main>
+    <table>
+        <thead>
+            <tr>Lastname</tr>
+            <tr>Firstname</tr>
+            <tr>Email</tr>
+            <tr>Status</tr>
+            <tr>Action</tr>
+        </thead>
+        <tbody>
+            <tr th:each="owner : ${owners}">
+                <td th:text="${owner.lastname}"></td>
+                <td th:text="${owner.firstname}"></td>
+                <td th:text="${owner.email}"></td>
+                <td th:text="${owner.enabled}"></td>
+                <td>
+                    <button>disable</button>
+                    <button>password resques</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+<footer>FOOTER</footer>
+</body>
+</html>

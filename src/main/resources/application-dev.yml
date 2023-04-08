@@ -1,0 +1,96 @@
+server:
+  port: 8084
+
+spring:
+#  application:
+#    name: user-management
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/school-user-management
+    username: school-um
+    password: school-um
+  jpa:
+    show-sql: true
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+
+  liquibase:
+    enabled: false
+
+#  cloud:
+#    vault:
+#      host: localhost
+#      port: 8200
+#      scheme: http
+#      authentication: TOKEN
+#      token: school-app
+#    vault:
+#      token: school-app
+#      scheme: http
+#      kv:
+#        enabled: true
+#      generic:
+#        enabled: true
+#        application-name: sukulu
+#    config:
+#      import: vault://
+
+
+#  thymeleaf:
+#    prefix: classpath:/templates/
+#    suffix: .html
+
+  main:
+    allow-bean-definition-overriding: true
+
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            authorizationUri: http://localhost:8080/realms/school-dev/protocol/openid-connect/auth
+            tokenUri: http://localhost:8080/realms/school-dev/protocol/openid-connect/token
+            userInfoUri: http://localhost:8080/realms/school-dev/protocol/openid-connect/userinfo
+            userNameAttribute: preferred_username
+            jwkSetUri: http://localhost:8080/realms/school-dev/protocol/openid-connect/certs
+        #            issuerUri: http://localhost:8080/realms/school-dev
+        registration:
+          keycloak:
+            clientId: school-user-management
+            clientSecret: vbRdRK9SaOazFWAojBrgCaMolgSGosBq
+            authorizationGrantType: authorization_code
+            redirectUri: http://localhost:8084/login/oauth2/code/keycloak
+            scope:
+              - openid
+
+client:
+  registration:
+    name: keycloak
+
+resource:
+  server:
+    url: http://localhost:8080
+    realm: school-dev
+#  client:
+#    uri: ${iam.uri}
+#    realm: ${iam.realm}
+
+eureka:
+  client:
+    enabled: false
+
+proxy:
+  owner:
+    url: http://localhost:8081/api/owner
+    name: owner
+
+logging:
+  level:
+    com.binark.school.usermanagement.proxy: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
