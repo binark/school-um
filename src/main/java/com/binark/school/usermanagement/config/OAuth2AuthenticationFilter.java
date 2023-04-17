@@ -6,32 +6,23 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-public class OAuth2AuthenticationFilter extends GenericFilterBean {
-
-    private final OAuth2Manager tokenManager;
-
-    public OAuth2AuthenticationFilter(OAuth2Manager tokenManager) {
-        this.tokenManager = tokenManager;
-    }
+@Component
+public class OAuth2AuthenticationFilter extends OncePerRequestFilter {
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        String username = (String) servletRequest.getAttribute("username");
-        String password = (String) servletRequest.getAttribute("password");
-
-//        ResponseEntity<TokenResponse> response = this.tokenManager.getAccessToken(username, password);
-//
-//        if (!response.getStatusCode().equals(HttpStatusCode.valueOf(200))) {
-//            throw new ServletException("Impossible authentication");
-//        }
-//
-//        TokenResponse tokenResponse = response.getBody();
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String authorization = request.getHeader("Authorization");
+        System.out.println("*********************************************** authorization token = " + authorization);
+        filterChain.doFilter(request, response);
     }
 }

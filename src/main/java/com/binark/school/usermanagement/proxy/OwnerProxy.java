@@ -1,12 +1,15 @@
 package com.binark.school.usermanagement.proxy;
 
-import com.binark.school.usermanagement.dto.OwnerAccountDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @FeignClient(name = "${proxy.owner.name}", url = "${proxy.owner.url}")
 public interface OwnerProxy {
 
-    @PostMapping
-    void createOwner(OwnerAccountDTO accountDTO);
+    public static final String NAME = "create-owner";
+
+   // @PostMapping
+    @GetMapping
+    String createOwner();
+
 }

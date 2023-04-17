@@ -4,13 +4,13 @@ spring:
   cloud:
     vault:
       host: localhost
-      port: 8200
+      port: 8300
       scheme: http
       kv-version: 2
 #      fail-fast: true
 #      uri: http://localhost:8200
       authentication: TOKEN
-      token: hvs.93P09qBQZ0EWKO6AQDKkdhMd
+      token: ${VAULT_TOKEN}
       kv:
         enabled: true
       generic:

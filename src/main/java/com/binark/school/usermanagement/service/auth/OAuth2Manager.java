@@ -79,7 +79,15 @@ public class OAuth2Manager {
 
         Keycloak oAuth2ClientInstance = this.getOAuth2ClientInstance(accessToken);
 
-        List<UserRepresentation> users = oAuth2ClientInstance.realm(realm).users().search(username);
+        System.out.println("oAuth2ClientInstance = " + oAuth2ClientInstance);
+
+        TokenManager tokenManager = oAuth2ClientInstance.tokenManager();
+
+        AccessTokenResponse token = tokenManager.getAccessToken();
+
+        System.out.println("token.getToken() = " + token.getToken());
+
+        List<UserRepresentation> users = oAuth2ClientInstance.realm(realm).users().list(); //.search(username);
 
         if (users.isEmpty()) {
             throw new UserNotFoundException();
@@ -105,6 +113,7 @@ public class OAuth2Manager {
                 .realm(realm)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
+             //   .grantType("password")
                 .username(username)
                 .password(password)
                 .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).build())
@@ -117,6 +126,7 @@ public class OAuth2Manager {
                 .serverUrl(serverUrl)
                 .realm(realm)
                 .clientId(clientId)
+               // .grantType("password")
                 .clientSecret(clientSecret)
                 .authorization(accessToken)
                 .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).build())

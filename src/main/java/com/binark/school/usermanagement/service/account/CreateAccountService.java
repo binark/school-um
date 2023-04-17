@@ -7,4 +7,6 @@ import com.binark.school.usermanagement.exception.EmailUsedException;
 public interface CreateAccountService {
 
     void createOwner(OwnerAccountDTO owner) throws EmailUsedException;
+
+    void testCircuitBreacker();
 }

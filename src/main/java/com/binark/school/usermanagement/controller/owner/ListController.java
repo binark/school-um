@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequestMapping("/owner")
+@RequestMapping("/admin/owner")
 @AllArgsConstructor
 public class ListController {
 

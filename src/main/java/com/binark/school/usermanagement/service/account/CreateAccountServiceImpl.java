@@ -1,12 +1,16 @@
 package com.binark.school.usermanagement.service.account;
 
+import com.binark.school.usermanagement.UserManagementApplication;
 import com.binark.school.usermanagement.dto.OwnerAccountDTO;
 import com.binark.school.usermanagement.entity.Account;
 import com.binark.school.usermanagement.exception.EmailUsedException;
 import com.binark.school.usermanagement.mapper.AccountMapper;
 import com.binark.school.usermanagement.proxy.OwnerProxy;
 import com.binark.school.usermanagement.repository.AccountRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -20,6 +24,25 @@ public class CreateAccountServiceImpl implements CreateAccountService {
     private final AccountMapper mapper;
 
     private final OwnerProxy proxy;
+
+//    @Autowired
+//    private UserManagementApplication.TestCircuitBreacker testCircuitBreacker;
+
+   // @PostConstruct
+    @CircuitBreaker(name = "test", fallbackMethod = "fallback")
+    public void testCircuitBreacker() {
+       // String res = this.testCircuitBreacker.principal("Armel");
+
+        System.out.println("**************************************** res = ");
+
+        String test = this.proxy.createOwner();
+
+        System.out.println("************************************************ test = " + test);
+    }
+
+    void fallback(Throwable throwable) {
+        System.out.println("************************************** fallback called ***************************");
+    }
 
     @Override
     public void createOwner(OwnerAccountDTO owner) throws EmailUsedException {
@@ -36,7 +59,7 @@ public class CreateAccountServiceImpl implements CreateAccountService {
 
         repository.save(account);
 
-        proxy.createOwner(owner);
+        proxy.createOwner();
     }
 
     private String randomPassword() {

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/owner")
+@RequestMapping("/admin/owner")
 @AllArgsConstructor
 public class CreateController {
 
@@ -28,6 +28,7 @@ public class CreateController {
 
     @GetMapping("/new")
     public String createOwner(Model model) {
+        this.createAccountService.testCircuitBreacker();
         model.addAttribute("account", new OwnerAccountDTO());
         return "owner/create";
     }
@@ -57,6 +58,6 @@ public class CreateController {
             return "owner/create";
         }
 
-        return "redirect:/owner";
+        return "redirect:/public/owner";
     }
 }
