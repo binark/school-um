@@ -80,7 +80,7 @@ eureka:
 
 proxy:
   owner:
-    url: http://localhost:8081/api/owner
+    url: http://localhost:8081 #/api/owner
     name: owner
 
 logging:

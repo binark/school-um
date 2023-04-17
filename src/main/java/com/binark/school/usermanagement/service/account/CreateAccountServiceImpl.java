@@ -30,9 +30,6 @@ public class CreateAccountServiceImpl implements CreateAccountService {
 
     private final OwnerProxy proxy;
 
-//    @Qualifier("OwnerCreatePublisher")
-//    private final Ipublisher<OwnerAccountDTO> publisher;
-
 //    @Autowired
 //    private UserManagementApplication.TestCircuitBreacker testCircuitBreacker;
 
