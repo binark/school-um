@@ -47,7 +47,6 @@ public class AuthController {
 
     private final AdminLoginService adminLoginService;
 
-
     // public AuthController(LoginService loginService) {
 //        this.loginService = loginService;
 //    }
@@ -73,6 +72,7 @@ public class AuthController {
     public String adminLogin(@ModelAttribute("login") LoginRequest login, Model model, HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, UserNotFoundException {
         this.adminLoginService.processLogin(login.getUsername(), login.getPassword(), request, response);
         //  model.addAttribute("login", login);
+
         return "redirect:/admin/owner";
     }
 

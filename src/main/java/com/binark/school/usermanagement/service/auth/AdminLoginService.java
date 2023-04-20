@@ -35,7 +35,6 @@ public class AdminLoginService{
     private final AdminLoginFirstStepPublisher publisher;
 
     private final AdminWrongEmailPublisher wrongEmailPublisher;
-
     private final AdminLoginProcess adminLoginProcess;
 
     private SecurityContextRepository strategy =  new HttpSessionSecurityContextRepository();
@@ -69,6 +68,7 @@ public class AdminLoginService{
         this.adminLoginProcess.setCredential(password.toUpperCase());
 
         // Send admin email with the generated password.
+
         publisher.publsh(email);
 
         return password;
@@ -91,6 +91,7 @@ public class AdminLoginService{
      * @throws UserNotFoundException If username (email) doesn't match
      * @throws AuthenticationException If password doesn't match or there is not saved one time password
      */
+
     public void processLogin(String username, String password, boolean rememberMe, HttpServletRequest request, HttpServletResponse response) throws UserNotFoundException, AuthenticationException {
 
         log.debug("**************** Login as admin");
@@ -117,7 +118,6 @@ public class AdminLoginService{
         holderStrategy.setContext(context);
         strategy.saveContext(context, request, response);
 
-        // Delete the saved password
         adminLoginProcess.setCredential(null);
     }
 }

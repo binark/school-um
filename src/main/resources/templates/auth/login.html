@@ -6,7 +6,6 @@
 </head>
 <body>
 
-<<<<<<< HEAD
 <form th:action="@{login/start}" method="post" th:object="${login}">
     <label for="email">Email</label>
     <input type="email" name="email" id="email" th:field="*{username}">
@@ -15,16 +14,17 @@
 <!--    <input type="password" name="password" id="password" th:field="*{password}">-->
 
     <input type="submit" value="Continue">
-=======
+
 <form th:action="@{/auth/admin/login}" method="post" th:object="${login}">
+
     <label for="email">Email</label>
     <input type="email" name="email" id="email" th:field="*{username}">
 
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" th:field="*{password}">
+<!--    <label for="password">Password</label>-->
+<!--    <input type="password" name="password" id="password" th:field="*{password}">-->
 
     <input type="submit" value="Connexion">
->>>>>>> ec89777 (setup form login)
+
 </form>
 
 </body>
