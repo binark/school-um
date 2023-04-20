@@ -26,6 +26,7 @@ public class AdminAuthenticationProvider extends AbstractUserDetailsAuthenticati
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         log.debug("******************************** try to authenticate user");
+        log.debug("username:  " + username);
         return new AdminUserDetail("username", "test", new ArrayList<>());
     }
 

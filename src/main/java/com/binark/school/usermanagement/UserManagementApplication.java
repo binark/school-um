@@ -44,6 +44,23 @@ public class UserManagementApplication {
 	}
 
 	@Bean
+	public NewTopic adminLoginTopic() {
+		return TopicBuilder.name("admin-login")
+				.partitions(1)
+				.replicas(1)
+				.build();
+	}
+
+	@Bean
+	public NewTopic adminWrongEmailTopic() {
+		return TopicBuilder.name("admin-wrong-email")
+				.partitions(1)
+				.replicas(1)
+				.build();
+	}
+
+
+	//@Bean
 	public ApplicationRunner runner(KafkaTemplate<String, Map> template) {
 
 		Map<String, Object> data = new HashMap<>();

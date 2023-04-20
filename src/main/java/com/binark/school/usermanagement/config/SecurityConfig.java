@@ -130,23 +130,14 @@ public class SecurityConfig {
 
             http.securityMatcher("/admin*")
                     .authenticationManager(authenticationManager())
+                    .sessionManagement(session ->
+                        session.maximumSessions(1)
+                    )
                     .authorizeHttpRequests(auth -> auth
                                //     .hasAuthority(SUPER_ADMIN)
                             .anyRequest().authenticated()
                     )
                     .formLogin()
-                    .successHandler(new AuthenticationSuccessHandler() {
-                        @Override
-                        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                            System.out.println("********************** login success ****************************");
-                        }
-                    })
-                    .failureHandler(new AuthenticationFailureHandler() {
-                        @Override
-                        public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                            System.out.println("************************ login failed ***********************");
-                        }
-                    })
                     .loginPage("/auth/admin/login")
                     .and()
                     .logout(logout -> logout.logoutUrl("/admin/logout"));

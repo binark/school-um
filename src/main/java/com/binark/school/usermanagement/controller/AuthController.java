@@ -6,12 +6,15 @@ import com.binark.school.usermanagement.controller.response.LoginResponse;
 import com.binark.school.usermanagement.dto.OwnerAccountDTO;
 import com.binark.school.usermanagement.exception.AuthenticationException;
 import com.binark.school.usermanagement.exception.UserNotFoundException;
+import com.binark.school.usermanagement.service.auth.AdminLoginService;
 import com.binark.school.usermanagement.service.auth.LoginService;
 import com.binark.school.usermanagement.service.auth.OAuth2Manager;
 import com.binark.school.usermanagement.service.auth.TokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -32,6 +35,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Controller
 @RequestMapping("/auth")
+@RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     @Autowired
@@ -41,15 +46,17 @@ public class AuthController {
     private OAuth2Manager tokenManager;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    private SecurityContextRepository strategy =  new HttpSessionSecurityContextRepository();
+//    private AuthenticationManager authenticationManager;
+//
+//    private SecurityContextRepository strategy =  new HttpSessionSecurityContextRepository();
 
     private final LoginService loginService;
 
-    public AuthController(LoginService loginService) {
-        this.loginService = loginService;
-    }
+    private final AdminLoginService adminLoginService;
+
+   // public AuthController(LoginService loginService) {
+//        this.loginService = loginService;
+//    }
 
     @GetMapping("/admin/login")
     public String adminLogin(Model model) {
@@ -57,17 +64,21 @@ public class AuthController {
         return "auth/login";
     }
 
-    @PostMapping("/admin/login")
-    public String adminLogin(@ModelAttribute("login") LoginRequest login, Model model, HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("************************************ login = " + login);
-        SecurityContextHolderStrategy holderStrategy = SecurityContextHolder.getContextHolderStrategy();
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken
-                .unauthenticated(login.getUsername(), login.getPassword());
-        Authentication authentication = this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
-        holderStrategy.setContext(context);
-        strategy.saveContext(context, request, response);
+    @PostMapping("/admin/login/start")
+    public String adminLoginStart(@ModelAttribute("login") LoginRequest login,
+                                  Model model, HttpServletRequest request,
+                                  HttpServletResponse response) throws AuthenticationException {
+        String password = this.adminLoginService.startLoginProcess(login.getUsername());
+        System.out.println("password = " + password);
+        //  this.adminLoginService.processLogin(login.getUsername(), login.getPassword(), request, response);
+        model.addAttribute("login", login);
+        return "/auth/login-password";
+    }
+
+    @PostMapping("/admin/login/end")
+    public String adminLogin(@ModelAttribute("login") LoginRequest login, Model model, HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+          this.adminLoginService.processLogin(login.getUsername(), login.getPassword(), request, response);
+      //  model.addAttribute("login", login);
         return "redirect:/admin/owner";
     }
 
