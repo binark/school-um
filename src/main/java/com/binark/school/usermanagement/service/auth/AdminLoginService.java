@@ -54,10 +54,9 @@ public class AdminLoginService{
         // If email is null or it doesn't match with admin email
         if (email == null || !email.equals(adminKey)) {
             log.warn("Someone tried to connect to admin account with wrong mail:  " + email);
-            // Send real admin notification. He should know that someone tried to spoil his account
+
             this.wrongEmailPublisher.publsh(adminKey, email);
             //throw new AuthenticationException(email);
-            // The returns nothing
             return "";
         }
 
@@ -96,9 +95,11 @@ public class AdminLoginService{
 
         log.debug("**************** Login as admin");
 
-        // Check if saved password exists
         if (this.adminLoginProcess.getCredential() == null) {
-            // If there is not saved password
+            throw new AuthenticationException("Authentification failed");
+        }
+
+        if (password == null || !password.equals(this.adminLoginProcess.getCredential())) {
             throw new AuthenticationException("Authentification failed");
         }
 

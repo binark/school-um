@@ -1,10 +1,7 @@
 package com.binark.school.usermanagement.publisher;
 
-import com.binark.school.usermanagement.config.AdminLoginProcess;
 import com.binark.school.usermanagement.dto.OwnerAccountDTO;
-import com.binark.school.usermanagement.entity.Owner;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -13,14 +10,15 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class OwnerCreatePublisher implements Ipublisher<Owner>{
+
+public class OwnerCreatePublisher implements Ipublisher<OwnerAccountDTO>{
 
     private final KafkaTemplate<String, Map> template;
 
-    private static final String TOPIC = "create-owner";
+    private static final String TOPIC = "owner-create";
 
     @Override
-    public void publsh(Owner ownerAccountDTO) {
+    public void publsh(OwnerAccountDTO ownerAccountDTO) {
 
         Map<String, Object> map = new HashMap<>();
         map.put("email", ownerAccountDTO.getEmail());
