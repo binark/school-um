@@ -6,6 +6,7 @@ import com.binark.school.usermanagement.exception.AuthenticationException;
 import com.binark.school.usermanagement.exception.UserNotFoundException;
 import com.binark.school.usermanagement.publisher.AdminLoginFirstStepPublisher;
 import com.binark.school.usermanagement.publisher.AdminPublisher;
+import com.binark.school.usermanagement.publisher.AdminWrongEmailPublisher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,8 @@ public class AdminLoginService{
 
     private final AdminLoginFirstStepPublisher publisher;
 
+    private final AdminWrongEmailPublisher wrongEmailPublisher;
+
     private final AdminLoginProcess adminLoginProcess;
 
     private SecurityContextRepository strategy =  new HttpSessionSecurityContextRepository();
@@ -44,7 +47,10 @@ public class AdminLoginService{
     public String startLoginProcess(String email) throws AuthenticationException {
 
         if (email == null || !email.equals(adminKey)) {
-            throw new AuthenticationException(email);
+            log.warn("Someone tried to connect to admin account with wrong mail:  " + email);
+            this.wrongEmailPublisher.publsh(adminKey, email);
+            //throw new AuthenticationException(email);
+            return "";
         }
         String password = UUID.randomUUID().toString();
         this.adminLoginProcess.setCredential(password.toUpperCase());
@@ -60,6 +66,10 @@ public class AdminLoginService{
     public void processLogin(String username, String password, boolean rememberMe, HttpServletRequest request, HttpServletResponse response) throws UserNotFoundException, AuthenticationException {
 
         log.debug("**************** Login as admin");
+
+        if (this.adminLoginProcess.getCredential() == null) {
+            throw new AuthenticationException("Authentification failed");
+        }
 
         if (password == null || !password.equals(this.adminLoginProcess.getCredential())) {
             throw new AuthenticationException("Authentification failed");

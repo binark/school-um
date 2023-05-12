@@ -6,11 +6,13 @@ import com.binark.school.usermanagement.entity.Account;
 import com.binark.school.usermanagement.exception.EmailUsedException;
 import com.binark.school.usermanagement.mapper.AccountMapper;
 import com.binark.school.usermanagement.proxy.OwnerProxy;
+import com.binark.school.usermanagement.publisher.Ipublisher;
 import com.binark.school.usermanagement.repository.AccountRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -25,6 +27,9 @@ public class CreateAccountServiceImpl implements CreateAccountService {
 
     private final OwnerProxy proxy;
 
+    @Qualifier("OwnerCreatePublisher")
+    private final Ipublisher<OwnerAccountDTO> publisher;
+
 //    @Autowired
 //    private UserManagementApplication.TestCircuitBreacker testCircuitBreacker;
 
@@ -35,9 +40,9 @@ public class CreateAccountServiceImpl implements CreateAccountService {
 
         System.out.println("**************************************** res = ");
 
-        String test = this.proxy.createOwner();
-
-        System.out.println("************************************************ test = " + test);
+//        String test = this.proxy.createOwner();
+//
+//        System.out.println("************************************************ test = " + test);
     }
 
     void fallback(Throwable throwable) {
@@ -59,7 +64,9 @@ public class CreateAccountServiceImpl implements CreateAccountService {
 
         repository.save(account);
 
-        proxy.createOwner();
+        proxy.createOwner(owner);
+
+        this.publisher.publsh(owner);
     }
 
     private String randomPassword() {
