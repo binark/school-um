@@ -80,7 +80,7 @@ eureka:
 
 proxy:
   owner:
-    url: http://localhost:8081 #/api/owner
+    url: http://localhost:8081/api/owner
     name: owner
 
 logging:
@@ -100,14 +100,3 @@ feign:
 admin:
   key: armelknyobe@gmail.com
   password: password
-
-# MONITORING
-
-management:
-  endpoints:
-    health:
-      show-details: always
-    web:
-      base-path: /admin/monitoring
-      exposure:
-        include: "*"

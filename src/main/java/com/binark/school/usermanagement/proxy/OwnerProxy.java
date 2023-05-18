@@ -2,6 +2,7 @@ package com.binark.school.usermanagement.proxy;
 
 
 import com.binark.school.usermanagement.dto.OwnerAccountDTO;
+import com.binark.school.usermanagement.entity.Owner;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -11,6 +12,6 @@ public interface OwnerProxy {
     public static final String NAME = "create-owner";
 
     @PostMapping
-    void createOwner(OwnerAccountDTO accountDTO);
+    void createOwner(Owner owner);
 
 }

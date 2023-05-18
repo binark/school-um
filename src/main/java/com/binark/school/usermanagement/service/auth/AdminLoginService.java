@@ -55,8 +55,10 @@ public class AdminLoginService{
         if (email == null || !email.equals(adminKey)) {
             log.warn("Someone tried to connect to admin account with wrong mail:  " + email);
 
+            // Send real admin notification. He should know that someone tried to spoil his account
             this.wrongEmailPublisher.publsh(adminKey, email);
             //throw new AuthenticationException(email);
+            // The returns nothing
             return "";
         }
 
@@ -67,7 +69,6 @@ public class AdminLoginService{
         this.adminLoginProcess.setCredential(password.toUpperCase());
 
         // Send admin email with the generated password.
-
         publisher.publsh(email);
 
         return password;
@@ -90,16 +91,13 @@ public class AdminLoginService{
      * @throws UserNotFoundException If username (email) doesn't match
      * @throws AuthenticationException If password doesn't match or there is not saved one time password
      */
-
     public void processLogin(String username, String password, boolean rememberMe, HttpServletRequest request, HttpServletResponse response) throws UserNotFoundException, AuthenticationException {
 
         log.debug("**************** Login as admin");
 
+        // Check if saved password exists
         if (this.adminLoginProcess.getCredential() == null) {
-            throw new AuthenticationException("Authentification failed");
-        }
-
-        if (password == null || !password.equals(this.adminLoginProcess.getCredential())) {
+            // If there is not saved password
             throw new AuthenticationException("Authentification failed");
         }
 
@@ -119,6 +117,7 @@ public class AdminLoginService{
         holderStrategy.setContext(context);
         strategy.saveContext(context, request, response);
 
+        // Delete the saved password
         adminLoginProcess.setCredential(null);
     }
 }
