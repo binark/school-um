@@ -6,15 +6,13 @@ import com.binark.school.usermanagement.exception.UserNotFoundException;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.token.TokenManager;
 import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.ws.rs.NotAuthorizedException;
@@ -57,6 +55,8 @@ public class OAuth2Manager {
         try {
       //      tokenManager.setMinTokenValidity(rememberMe ? TokenValidaty.REMEMBERME : TokenValidaty.NORMAL);
             AccessTokenResponse accessToken = tokenManager.getAccessToken();
+
+            System.out.println("access token:  " + accessToken);
 
             return TokenResponse.builder()
                     .accessToken(accessToken.getToken())
@@ -131,5 +131,9 @@ public class OAuth2Manager {
                 .authorization(accessToken)
                 .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).build())
                 .build();
+    }
+
+    public RealmResource getRealmResource() {
+        return this.getOAuth2ClientInstance("sukuluadmin", "admin").realm(realm);
     }
 }

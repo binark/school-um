@@ -102,7 +102,8 @@ public class AuthController {
     @GetMapping("/token")
     @ResponseBody
     public ResponseEntity<TokenResponse> getAccessToken(@RequestParam("username") String username, @RequestParam("password") String password) throws AuthenticationException {
-
+        System.out.println("username = " + username);
+        System.out.println("password = " + password);
 //        String token = tokenManager.getAccessToken();
 
         String credentials = "school-user-management:vbRdRK9SaOazFWAojBrgCaMolgSGosBq";

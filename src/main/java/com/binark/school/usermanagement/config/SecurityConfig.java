@@ -32,6 +32,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.io.IOException;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableConfigurationProperties(IamServerConfig.class)
+@EnableTransactionManagement
 public class SecurityConfig {
 
     @Autowired
@@ -94,7 +96,7 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-            http.securityMatcher("/user*")
+            http.securityMatcher("/user/**")
                     .csrf(csrf -> csrf.disable())
                     .sessionManagement(session ->
                             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -128,7 +130,7 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
 
-            http.securityMatcher("/admin*")
+            http.securityMatcher("/admin/**")
                     .authenticationManager(authenticationManager())
                     .sessionManagement(session ->
                         session.maximumSessions(1)

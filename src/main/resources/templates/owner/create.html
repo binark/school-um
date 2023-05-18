@@ -11,6 +11,8 @@
 </header>
 
 <main>
+    <div th:if="${appError}" th:text="appError"></div>
+
     <form th:action="@{/admin/owner/new}" method="post" th:object="${account}">
 
         <div>

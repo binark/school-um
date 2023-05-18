@@ -3,6 +3,7 @@ spring:
     name: school
   cloud:
     vault:
+      enabled: false
       host: localhost
       port: 8300
       scheme: http

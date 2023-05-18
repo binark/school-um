@@ -15,18 +15,29 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "account_type", discriminatorType = DiscriminatorType.STRING)
+@Inheritance(strategy = InheritanceType.JOINED)
+//@DiscriminatorColumn(name = "account_type", discriminatorType = DiscriminatorType.STRING)
 public class Account extends AbsctractBaseEntity{
 
   //  @Email(message = "You should enter a valid email address")
     @NotBlank
-    @Column(unique = true, nullable = false, updatable = false)
+    @Column(unique = true, nullable = false)
     protected String identifier;
 
     @Size(min = 8, max = 32, message = "You password should have at least 8 and at most 32 characters")
     @Column(nullable = false)
     protected String password;
+
+    private String firstname;
+
+    @NotBlank(message = "The lastname could not be empty or null")
+    @Size(min = 2, message = "The lastname should have at least two characters")
+    @Column(nullable = false)
+    private String lastname;
+
+    // The Iam (Keycloak) id
+    @Column(unique = true, name = "managed_id")
+    private String iamId;
 
 //    @Builder
 //    public Account(Long id, String slug, LocalDateTime createAt, LocalDateTime modifiedDate, Boolean enabled, Boolean deleted, String identifier, String password) {

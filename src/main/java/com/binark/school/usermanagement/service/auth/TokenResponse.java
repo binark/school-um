@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * The token response model when client perform successfully authentication
+ */
 @Data
 @Builder
 public class TokenResponse {
