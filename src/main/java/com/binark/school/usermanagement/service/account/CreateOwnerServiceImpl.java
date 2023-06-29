@@ -71,7 +71,7 @@ public class CreateOwnerServiceImpl implements CreateAccountService {
         this.repository.save(owner);
 
         // Create owner to core module
-        this.proxy.createOwner(owner);
+//        this.proxy.createOwner(owner);
 
         // Send owner email
         this.publisher.publsh(owner);

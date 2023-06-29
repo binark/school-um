@@ -100,3 +100,14 @@ feign:
 admin:
   key: armelknyobe@gmail.com
   password: password
+
+# MONITORING
+
+management:
+  endpoints:
+    health:
+      show-details: always
+    web:
+      base-path: /admin/monitoring
+      exposure:
+        include: "*"
