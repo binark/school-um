@@ -1,12 +1,16 @@
 package com.binark.school.usermanagement.controller.owner;
 
 import com.binark.school.usermanagement.dto.OwnerAccountDTO;
+import com.binark.school.usermanagement.exception.AccountIdentifierUsedException;
 import com.binark.school.usermanagement.exception.EmailUsedException;
 import com.binark.school.usermanagement.mapper.AccountMapper;
 import com.binark.school.usermanagement.service.account.CreateAccountService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,20 +22,31 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/owner")
-@AllArgsConstructor
+@RequestMapping("/admin/owner")
+@RequiredArgsConstructor
 public class CreateController {
 
     private final AccountMapper mapper;
 
-    private final CreateAccountService createAccountService;
+    @Autowired
+    @Qualifier("createOwner")
+    private CreateAccountService createOwnerService;
 
     @GetMapping("/new")
     public String createOwner(Model model) {
+     //   this.createAccountService.testCircuitBreacker();
         model.addAttribute("account", new OwnerAccountDTO());
         return "owner/create";
     }
 
+    /**
+     * Create an owner and redirect to the owner listing page
+     * @param account {@link OwnerAccountDTO} data
+     * @param result used to get errors
+     * @param model to send data to the view
+     * @param response
+     * @return
+     */
     @PostMapping("/new")
     public String createOwner(@ModelAttribute("account") @Valid OwnerAccountDTO account, BindingResult result, Model model, HttpServletResponse response) {
         System.out.println("account = " + account);
@@ -50,13 +65,13 @@ public class CreateController {
 
 
         try {
-            this.createAccountService.createOwner(account);
-        } catch (EmailUsedException e) {
+            this.createOwnerService.create(mapper.toOwnerEntity(account));
+        } catch (AccountIdentifierUsedException e) {
             e.printStackTrace();
             model.addAttribute("appError", e.getMessage());
             return "owner/create";
         }
 
-        return "redirect:/owner";
+        return "redirect:/admin/owner";
     }
 }

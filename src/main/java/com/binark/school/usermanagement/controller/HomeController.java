@@ -13,8 +13,23 @@ public class HomeController {
         return "The user management module";
     }
 
-    @GetMapping("private")
-    public String secure() {
-        return "The private route";
+    @GetMapping("public")
+    public String publicRoute() {
+        return "The public route";
+    }
+
+    @GetMapping("admin")
+    public String adminRoute() {
+        return "The admin route";
+    }
+
+    @GetMapping("user")
+    public String userRoute() {
+        return "The user route";
+    }
+
+    @GetMapping("keycloak")
+    public String keycloakRoute() {
+        return "The keycloak route";
     }
 }

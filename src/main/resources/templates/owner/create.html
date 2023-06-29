@@ -11,7 +11,9 @@
 </header>
 
 <main>
-    <form th:action="@{/owner/new}" method="post" th:object="${account}">
+    <div th:if="${appError}" th:text="appError"></div>
+
+    <form th:action="@{/admin/owner/new}" method="post" th:object="${account}">
 
         <div>
             <label for="email">Email</label>

@@ -3,21 +3,40 @@ package com.binark.school.usermanagement.controller;
 import com.binark.school.usermanagement.controller.request.LoginRequest;
 import com.binark.school.usermanagement.controller.response.BaseResponse;
 import com.binark.school.usermanagement.controller.response.LoginResponse;
+import com.binark.school.usermanagement.dto.OwnerAccountDTO;
 import com.binark.school.usermanagement.exception.AuthenticationException;
 import com.binark.school.usermanagement.exception.UserNotFoundException;
+import com.binark.school.usermanagement.service.auth.AdminLoginService;
 import com.binark.school.usermanagement.service.auth.LoginService;
 import com.binark.school.usermanagement.service.auth.OAuth2Manager;
 import com.binark.school.usermanagement.service.auth.TokenResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-@RestController
+@Controller
 @RequestMapping("/auth")
+@RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     @Autowired
@@ -26,13 +45,45 @@ public class AuthController {
     @Autowired
     private OAuth2Manager tokenManager;
 
+    @Autowired
+//    private AuthenticationManager authenticationManager;
+//
+//    private SecurityContextRepository strategy =  new HttpSessionSecurityContextRepository();
+
     private final LoginService loginService;
 
-    public AuthController(LoginService loginService) {
-        this.loginService = loginService;
+    private final AdminLoginService adminLoginService;
+
+   // public AuthController(LoginService loginService) {
+//        this.loginService = loginService;
+//    }
+
+    @GetMapping("/admin/login")
+    public String adminLogin(Model model) {
+        model.addAttribute("login", new LoginRequest());
+        return "auth/login";
+    }
+
+    @PostMapping("/admin/login/start")
+    public String adminLoginStart(@ModelAttribute("login") LoginRequest login,
+                                  Model model, HttpServletRequest request,
+                                  HttpServletResponse response) throws AuthenticationException {
+        String password = this.adminLoginService.startLoginProcess(login.getUsername());
+        System.out.println("password = " + password);
+        //  this.adminLoginService.processLogin(login.getUsername(), login.getPassword(), request, response);
+        model.addAttribute("login", login);
+        return "/auth/login-password";
+    }
+
+    @PostMapping("/admin/login/end")
+    public String adminLogin(@ModelAttribute("login") LoginRequest login, Model model, HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+          this.adminLoginService.processLogin(login.getUsername(), login.getPassword(), request, response);
+      //  model.addAttribute("login", login);
+        return "redirect:/admin/owner";
     }
 
     @PostMapping("/login")
+    @ResponseBody
     public ResponseEntity<BaseResponse> authenticate(@RequestBody LoginRequest loginRequest) throws UserNotFoundException, AuthenticationException {
 
         String username = loginRequest.getUsername();
@@ -49,8 +100,10 @@ public class AuthController {
     }
 
     @GetMapping("/token")
+    @ResponseBody
     public ResponseEntity<TokenResponse> getAccessToken(@RequestParam("username") String username, @RequestParam("password") String password) throws AuthenticationException {
-
+        System.out.println("username = " + username);
+        System.out.println("password = " + password);
 //        String token = tokenManager.getAccessToken();
 
         String credentials = "school-user-management:vbRdRK9SaOazFWAojBrgCaMolgSGosBq";
@@ -61,12 +114,12 @@ public class AuthController {
         //headers.add("Authorization", "Basic " + encodedCredentials);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "password");
-        map.add("username", "test@test.com");
-        map.add("password", "test");
-        map.add("client_id", "school-user-management");
-        map.add("client_secret", "vbRdRK9SaOazFWAojBrgCaMolgSGosBq");
+        map.add("username", "sukuluadmin");
+        map.add("password", "admin");
+        map.add("client_id", "sukulu-um");
+      //  map.add("client_secret", "vbRdRK9SaOazFWAojBrgCaMolgSGosBq");
         HttpEntity<MultiValueMap> request = new HttpEntity<>(map, headers);
-        String accessTokenUrl = "http://localhost:8080/realms/school-dev/protocol/openid-connect/token";
+        String accessTokenUrl = "http://localhost:8080/realms/sukulu/protocol/openid-connect/token";
 
         TokenResponse accessToken = tokenManager.getAccessToken(username, password);
 

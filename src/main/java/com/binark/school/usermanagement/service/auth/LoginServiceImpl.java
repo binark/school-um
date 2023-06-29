@@ -24,7 +24,10 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public LoginResponse processLogin(String username, String password, boolean rememberMe) throws UserNotFoundException, AuthenticationException {
 
+        System.out.println("************************** login service *******************************");
         TokenResponse response = this.oAuth2Manager.getAccessToken(username, password);
+
+        System.out.println("**************************** token returned *********************");
 
         UserResponse user = this.oAuth2Manager.getUserInfo(response.getAccessToken(), username);
 

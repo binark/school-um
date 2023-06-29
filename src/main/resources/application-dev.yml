@@ -18,25 +18,11 @@ spring:
   liquibase:
     enabled: false
 
-#  cloud:
-#    vault:
-#      host: localhost
-#      port: 8200
-#      scheme: http
-#      authentication: TOKEN
-#      token: school-app
-#    vault:
-#      token: school-app
-#      scheme: http
-#      kv:
-#        enabled: true
-#      generic:
-#        enabled: true
-#        application-name: sukulu
-#    config:
-#      import: vault://
-
-
+  kafka:
+    producer:
+      client-id: um-acc-id
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: com.binark.school.usermanagement.serializer.AccountSerializer
 #  thymeleaf:
 #    prefix: classpath:/templates/
 #    suffix: .html
@@ -46,23 +32,35 @@ spring:
 
   security:
     oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/sukulu
+          jwk-set-uri: http://localhost:8080/realms/sukulu/protocol/openid-connect/certs
+
       client:
         provider:
           keycloak:
-            authorizationUri: http://localhost:8080/realms/school-dev/protocol/openid-connect/auth
-            tokenUri: http://localhost:8080/realms/school-dev/protocol/openid-connect/token
-            userInfoUri: http://localhost:8080/realms/school-dev/protocol/openid-connect/userinfo
+            authorizationUri: http://localhost:8080/realms/sukulu/protocol/openid-connect/auth
+            tokenUri: http://localhost:8080/realms/sukulu/protocol/openid-connect/token
+            userInfoUri: http://localhost:8080/realms/sukulu/protocol/openid-connect/userinfo
             userNameAttribute: preferred_username
-            jwkSetUri: http://localhost:8080/realms/school-dev/protocol/openid-connect/certs
+            jwkSetUri: http://localhost:8080/realms/sukulu/protocol/openid-connect/certs
         #            issuerUri: http://localhost:8080/realms/school-dev
         registration:
           keycloak:
-            clientId: school-user-management
-            clientSecret: vbRdRK9SaOazFWAojBrgCaMolgSGosBq
+            clientId: sukulu-um
+            clientSecret: oQlniOOAUAnhN2WjOeuicIGbxpVnDUcc
             authorizationGrantType: authorization_code
             redirectUri: http://localhost:8084/login/oauth2/code/keycloak
             scope:
               - openid
+
+jwt:
+  auth:
+    converter:
+      resource-id: sukulu-um
+      principal-attribute: preferred_username
+
 
 client:
   registration:
@@ -71,7 +69,7 @@ client:
 resource:
   server:
     url: http://localhost:8080
-    realm: school-dev
+    realm: sukulu
 #  client:
 #    uri: ${iam.uri}
 #    realm: ${iam.realm}
@@ -94,3 +92,22 @@ feign:
     config:
       default:
         connectTimeout: 5000
+  circuitbreaker:
+    enabled: true
+    alphanumeric-ids:
+      enabled: true
+
+admin:
+  key: armelknyobe@gmail.com
+  password: password
+
+# MONITORING
+
+management:
+  endpoints:
+    health:
+      show-details: always
+    web:
+      base-path: /admin/monitoring
+      exposure:
+        include: "*"
