@@ -2,12 +2,10 @@ package com.binark.school.usermanagement.controller.owner;
 
 import com.binark.school.usermanagement.dto.OwnerAccountDTO;
 import com.binark.school.usermanagement.exception.AccountIdentifierUsedException;
-import com.binark.school.usermanagement.exception.EmailUsedException;
 import com.binark.school.usermanagement.mapper.AccountMapper;
-import com.binark.school.usermanagement.service.account.CreateAccountService;
+import com.binark.school.usermanagement.service.account.AccountService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,7 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ public class CreateController {
 
     @Autowired
     @Qualifier("createOwner")
-    private CreateAccountService createOwnerService;
+    private AccountService createOwnerService;
 
     @GetMapping("/new")
     public String createOwner(Model model) {

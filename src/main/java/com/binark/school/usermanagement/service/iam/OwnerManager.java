@@ -63,7 +63,7 @@ public class OwnerManager implements IamManager {
     private UserRepresentation getIamOwner(Owner owner) {
 
         UserRepresentation user = new UserRepresentation();
-        user.setEnabled(true);
+        user.setEnabled(false);
         user.setEmail(owner.getEmail());
         user.setUsername(owner.getEmail());
         user.setFirstName(owner.getFirstname());

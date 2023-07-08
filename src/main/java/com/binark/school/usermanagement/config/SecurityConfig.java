@@ -15,8 +15,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -24,9 +24,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+//@EnableWebMvc
 @RequiredArgsConstructor
 @EnableConfigurationProperties(IamServerConfig.class)
 @EnableTransactionManagement
@@ -42,7 +49,7 @@ public class SecurityConfig {
     private static final String SUPER_ADMIN = "SUPER";
     private static final String USER = "user";
 
-   // private final OAuth2AuthenticationFilter authenticationFilter;
+    // private final OAuth2AuthenticationFilter authenticationFilter;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -51,9 +58,9 @@ public class SecurityConfig {
 
         return manager;
     }
-        @Bean
+    @Bean
     public PasswordEncoder passwordEncoder() {
-        return new StandardPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -82,6 +89,28 @@ public class SecurityConfig {
         }
 
         @Bean
+        CorsConfigurationSource corsConfigurationSource() {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOrigins(Arrays.asList("*"));
+            configuration.setAllowedMethods(Arrays.asList("*"));
+            configuration.setAllowedHeaders(Arrays.asList("*"));
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", configuration);
+            return source;
+        }
+
+        @Bean
+        public CorsWebFilter corsWebFilter() {
+            return new CorsWebFilter(corsConfigurationSource());
+        }
+
+        @Bean
+        SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+            http.cors(cors -> cors.disable());
+            return http.build();
+        }
+
+        @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
             http.securityMatcher("/user/**")
@@ -89,10 +118,10 @@ public class SecurityConfig {
                     .sessionManagement(session ->
                             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(auth -> auth
-                            .requestMatchers("/public/**", "/auth/**").permitAll()
-                            .requestMatchers("/user/**").authenticated()
-                                    //.hasAnyRole(ADMIN, USER)
-                          //  .anyRequest().authenticated()
+                                    .requestMatchers("/public/**", "/auth/**").permitAll()
+                                    .requestMatchers("/user/**").authenticated()
+                            //.hasAnyRole(ADMIN, USER)
+                            //  .anyRequest().authenticated()
                     )
                     .oauth2ResourceServer()
                     .bearerTokenResolver(tokenResolver())
@@ -121,19 +150,16 @@ public class SecurityConfig {
             http.securityMatcher("/admin/**")
                     .authenticationManager(authenticationManager())
                     .sessionManagement(session ->
-                        session.maximumSessions(1)
+                            session.maximumSessions(1)
                     )
                     .authorizeHttpRequests(auth -> auth
-                               //     .hasAuthority(SUPER_ADMIN)
-                            .requestMatchers("/admin/monitoring/**").permitAll()
+                            //     .hasAuthority(SUPER_ADMIN)
                             .anyRequest().authenticated()
                     )
                     .formLogin()
                     .loginPage("/auth/admin/login")
                     .and()
                     .logout(logout -> logout.logoutUrl("/admin/logout"));
-
-//            http.authorizeHttpRequests().requestMatchers("/admin/management/**").permitAll();
 
             return http.build();
         }

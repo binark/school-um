@@ -9,5 +9,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findOneByIdentifier(String email);
 
+    Optional<Account> findOneByResetPasswordKey(String resetPasswordKey);
+
+    Optional<Account> findOneBySlug(String slug);
+
     void deleteByIdentifier(String email);
 }

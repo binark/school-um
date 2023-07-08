@@ -3,7 +3,6 @@ package com.binark.school.usermanagement.controller;
 import com.binark.school.usermanagement.controller.request.LoginRequest;
 import com.binark.school.usermanagement.controller.response.BaseResponse;
 import com.binark.school.usermanagement.controller.response.LoginResponse;
-import com.binark.school.usermanagement.dto.OwnerAccountDTO;
 import com.binark.school.usermanagement.exception.AuthenticationException;
 import com.binark.school.usermanagement.exception.UserNotFoundException;
 import com.binark.school.usermanagement.service.auth.AdminLoginService;
@@ -12,20 +11,14 @@ import com.binark.school.usermanagement.service.auth.OAuth2Manager;
 import com.binark.school.usermanagement.service.auth.TokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextHolderStrategy;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
@@ -54,6 +47,7 @@ public class AuthController {
 
     private final AdminLoginService adminLoginService;
 
+
    // public AuthController(LoginService loginService) {
 //        this.loginService = loginService;
 //    }
@@ -76,7 +70,8 @@ public class AuthController {
     }
 
     @PostMapping("/admin/login/end")
-    public String adminLogin(@ModelAttribute("login") LoginRequest login, Model model, HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public String adminLogin(@ModelAttribute("login") LoginRequest login, Model model, HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, UserNotFoundException {
+
           this.adminLoginService.processLogin(login.getUsername(), login.getPassword(), request, response);
       //  model.addAttribute("login", login);
         return "redirect:/admin/owner";
@@ -110,14 +105,14 @@ public class AuthController {
         String encodedCredentials = new String(Base64.encodeBase64(credentials.getBytes(), true));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-       // headers.setAccept(MediaType.APPLICATION_JSON);
+        // headers.setAccept(MediaType.APPLICATION_JSON);
         //headers.add("Authorization", "Basic " + encodedCredentials);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "password");
         map.add("username", "sukuluadmin");
         map.add("password", "admin");
         map.add("client_id", "sukulu-um");
-      //  map.add("client_secret", "vbRdRK9SaOazFWAojBrgCaMolgSGosBq");
+        //  map.add("client_secret", "vbRdRK9SaOazFWAojBrgCaMolgSGosBq");
         HttpEntity<MultiValueMap> request = new HttpEntity<>(map, headers);
         String accessTokenUrl = "http://localhost:8080/realms/sukulu/protocol/openid-connect/token";
 
@@ -136,6 +131,6 @@ public class AuthController {
 //                .retrieve()
 //                .bodyToMono(String.class);
 
-       // return "token";
+        // return "token";
     }
 }

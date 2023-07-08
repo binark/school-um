@@ -29,7 +29,7 @@ public class AdminLoginFirstStepPublisher implements Ipublisher<String> {
     private AdminLoginProcess adminLoginProcess;
 
     @Override
-    public void publsh(String email) {
+    public void publish(String email) {
 
         Map<String, Object> map = new HashMap<>();
         map.put("email", email);

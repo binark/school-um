@@ -2,3 +2,6 @@ spring:
   profiles:
     active:
       - @spring.profiles.active@
+
+school:
+  pwd-token-expiration: 720 # password token expiration time in hour

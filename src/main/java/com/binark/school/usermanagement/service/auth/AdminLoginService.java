@@ -35,7 +35,6 @@ public class AdminLoginService{
     private final AdminLoginFirstStepPublisher publisher;
 
     private final AdminWrongEmailPublisher wrongEmailPublisher;
-
     private final AdminLoginProcess adminLoginProcess;
 
     private SecurityContextRepository strategy =  new HttpSessionSecurityContextRepository();
@@ -55,6 +54,7 @@ public class AdminLoginService{
         // If email is null or it doesn't match with admin email
         if (email == null || !email.equals(adminKey)) {
             log.warn("Someone tried to connect to admin account with wrong mail:  " + email);
+
             // Send real admin notification. He should know that someone tried to spoil his account
             this.wrongEmailPublisher.publsh(adminKey, email);
             //throw new AuthenticationException(email);
@@ -69,7 +69,7 @@ public class AdminLoginService{
         this.adminLoginProcess.setCredential(password.toUpperCase());
 
         // Send admin email with the generated password.
-        publisher.publsh(email);
+        publisher.publish(email);
 
         return password;
     }

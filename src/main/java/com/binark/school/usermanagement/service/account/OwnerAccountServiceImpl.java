@@ -8,27 +8,39 @@ import com.binark.school.usermanagement.publisher.Ipublisher;
 import com.binark.school.usermanagement.repository.AccountRepository;
 import com.binark.school.usermanagement.service.iam.IamManager;
 import com.binark.school.usermanagement.utils.RandomPasswordGenerator;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("createOwner")
-@RequiredArgsConstructor
-public class CreateOwnerServiceImpl implements CreateAccountService {
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-    private final AccountRepository repository;
+@Service("createOwner")
+public class OwnerAccountServiceImpl extends AbstractAccountService implements AccountService {
+
+    @Value("${school.pwd-token-expiration}")
+    private int tokenExpirationTime;
 
     private final OwnerProxy proxy;
 
-//    @Autowired
-//    @Qualifier("OwnerCreatePublisher")
     private final Ipublisher<Owner> publisher;
 
+    private final IamManager iamManager;
+
     @Autowired
-    @Qualifier("iamOwner")
-    private IamManager iamManager;
+    public OwnerAccountServiceImpl(
+            AccountRepository repository,
+            OwnerProxy proxy,
+            Ipublisher<Owner> publisher,
+            @Qualifier("iamOwner") IamManager iamManager) {
+
+        super(repository);
+        this.proxy = proxy;
+        this.publisher = publisher;
+        this.iamManager = iamManager;
+    }
 
     /**
      * Create owner account
@@ -61,6 +73,8 @@ public class CreateOwnerServiceImpl implements CreateAccountService {
         // Enable and set default random password for owner
         owner.setEnabled(false);
         owner.setPassword(RandomPasswordGenerator.getRandomPassword());
+        owner.setResetPasswordKey(UUID.randomUUID().toString());
+        owner.setResetPasswordExpiration(LocalDateTime.now().plusHours(tokenExpirationTime));
 
         //Create keycloak account
         String iamId = this.iamManager.createUser(owner);
@@ -71,14 +85,9 @@ public class CreateOwnerServiceImpl implements CreateAccountService {
         this.repository.save(owner);
 
         // Create owner to core module
-//        this.proxy.createOwner(owner);
+     //   this.proxy.createOwner(owner);
 
         // Send owner email
-        this.publisher.publsh(owner);
-    }
-
-    @Override
-    public void testCircuitBreacker() {
-
+        this.publisher.publish(owner);
     }
 }
