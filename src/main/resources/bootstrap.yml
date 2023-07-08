@@ -1,6 +1,7 @@
 spring:
   application:
-    name: school
+    name: school-um
+
   cloud:
     vault:
       enabled: false

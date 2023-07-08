@@ -69,7 +69,7 @@ public class AdminLoginService{
         this.adminLoginProcess.setCredential(password.toUpperCase());
 
         // Send admin email with the generated password.
-        publisher.publsh(email);
+        publisher.publish(email);
 
         return password;
     }

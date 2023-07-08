@@ -17,14 +17,14 @@ public class OwnerCreatePublisher implements Ipublisher<Owner>{
     private static final String TOPIC = "create-owner";
 
     @Override
-    public void publsh(Owner ownerAccountDTO) {
+    public void publish(Owner ownerAccount) {
 
         Map<String, Object> map = new HashMap<>();
-        map.put("email", ownerAccountDTO.getEmail());
-        map.put("password", ownerAccountDTO.getPassword());
-        map.put("lastname", ownerAccountDTO.getLastname());
-        map.put("schoolCount", ownerAccountDTO.getAuthorizedSchool());
-        map.put("slug", ownerAccountDTO.getSlug());
+        map.put("email", ownerAccount.getEmail());
+        map.put("resetPasswordKey", ownerAccount.getResetPasswordKey());
+        map.put("lastname", ownerAccount.getLastname());
+        map.put("schoolCount", ownerAccount.getAuthorizedSchool());
+        map.put("slug", ownerAccount.getSlug());
 
         this.template.send(TOPIC, map);
     }

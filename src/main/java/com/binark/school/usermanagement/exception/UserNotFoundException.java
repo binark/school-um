@@ -2,7 +2,7 @@ package com.binark.school.usermanagement.exception;
 
 import javax.ws.rs.NotFoundException;
 
-public class UserNotFoundException extends NotFoundException {
+public class UserNotFoundException extends SchoolCommonNotFoundException {
 
     public UserNotFoundException() {
         super("L'utilisateur n'existe pas dans le système");

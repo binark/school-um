@@ -3,6 +3,7 @@ package com.binark.school.usermanagement.controller.owner;
 import com.binark.school.usermanagement.dto.OwnerAccountDTO;
 import com.binark.school.usermanagement.exception.AccountIdentifierUsedException;
 import com.binark.school.usermanagement.mapper.AccountMapper;
+import com.binark.school.usermanagement.service.account.AccountService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,7 @@ public class CreateController {
 
     @Autowired
     @Qualifier("createOwner")
-
-    private CreateAccountService createOwnerService;
+    private AccountService createOwnerService;
 
     @GetMapping("/new")
     public String createOwner(Model model) {

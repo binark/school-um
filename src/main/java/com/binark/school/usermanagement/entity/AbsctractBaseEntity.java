@@ -21,7 +21,7 @@ public abstract class AbsctractBaseEntity {
     @GeneratedValue
     protected Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     protected String slug;
 
     @CreatedDate
