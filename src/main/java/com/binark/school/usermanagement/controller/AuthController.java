@@ -77,18 +77,24 @@ public class AuthController {
         return "redirect:/admin/owner";
     }
 
+    /**
+     * Authentication user by username and password
+     * @param loginRequest {@link LoginRequest} login request instance
+     * @return {@link ResponseEntity} of {@link BaseResponse} containing access token and user information
+     * @throws AuthenticationException if username or password doesn't match
+     */
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity<BaseResponse> authenticate(@RequestBody LoginRequest loginRequest) throws UserNotFoundException, AuthenticationException {
+    public ResponseEntity<BaseResponse> authenticate(@RequestBody LoginRequest loginRequest) throws AuthenticationException {
 
-        String username = loginRequest.getUsername();
-        String password = loginRequest.getPassword();
-        boolean rememberMe = loginRequest.isRememberMe();
+        LoginResponse response = this.loginService.processLogin(
+                loginRequest.getUsername(),
+                loginRequest.getPassword(),
+                loginRequest.isRememberMe());
 
-        LoginResponse response = this.loginService.processLogin(username, password, rememberMe);
         BaseResponse<LoginResponse> baseResponse = new BaseResponse();
         baseResponse.setData(response);
-        baseResponse.setMessage("Connexion réussie!");
+        baseResponse.setMessage("Login successful!");
 
         return ResponseEntity.ok(baseResponse);
 
