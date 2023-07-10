@@ -89,7 +89,7 @@ proxy:
 
 logging:
   level:
-    com.binark.school.usermanagement.proxy: DEBUG
+    com.binark.school.usermanagement: DEBUG
 
 feign:
   client:

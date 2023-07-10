@@ -75,6 +75,7 @@ public class OAuth2Manager {
 
     }
 
+    @Deprecated
     public UserResponse getUserInfo(String accessToken, String username) throws UserNotFoundException {
 
         Keycloak oAuth2ClientInstance = this.getOAuth2ClientInstance(accessToken);

@@ -20,9 +20,8 @@ import java.time.LocalDateTime;
 //@DiscriminatorColumn(name = "account_type", discriminatorType = DiscriminatorType.STRING)
 public class Account extends AbsctractBaseEntity{
 
-  //  @Email(message = "You should enter a valid email address")
     @NotBlank
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     protected String identifier;
 
     @Size(min = 8, message = "Your password should have at least 8 and at most 32 characters")

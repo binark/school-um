@@ -3,12 +3,14 @@ package com.binark.school.usermanagement.service.auth;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * The token response model when client perform successfully authentication
  */
 @Data
 @Builder
+@ToString
 public class TokenResponse {
 
     @JsonProperty("access_token")
