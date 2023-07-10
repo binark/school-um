@@ -118,7 +118,7 @@ public class SecurityConfig {
                     .sessionManagement(session ->
                             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests(auth -> auth
-                                    .requestMatchers("/public/**", "/auth/**").permitAll()
+                                    .requestMatchers("/public/**", "/auth/**", "/account/**").permitAll()
                                     .requestMatchers("/user/**").authenticated()
                             //.hasAnyRole(ADMIN, USER)
                             //  .anyRequest().authenticated()

@@ -9,6 +9,7 @@ import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
@@ -39,22 +40,16 @@ public class OwnerManager implements IamManager {
 
         UsersResource usersResource = resource.users();
 
+        System.out.println("usersResource = " + usersResource.count());
+
+        GroupRepresentation ownerGroup = this.getOwnerGroup(resource);
+
+        user.setGroups(Arrays.asList(ownerGroup.getPath()));
+
         // Create iam account for the owner
         Response response = usersResource.create(user);
 
-//        System.out.printf("Repsonse: %s %s%n", response.getStatus(), response.getStatusInfo());
-//        System.out.println(response.getLocation());
-        // Get the id of the newly created owner
         String userId = CreatedResponseUtil.getCreatedId(response);
-
-//        System.out.printf("User created with userId: %s%n", userId);
-
-//        CredentialRepresentation passwordCredential = this.getPassword();
-//
-//        UserResource userResource = usersResource.get(userId);
-//
-//        // Set password credential
-//        userResource.resetPassword(passwordCredential);
 
         return userId;
 
@@ -68,18 +63,25 @@ public class OwnerManager implements IamManager {
         user.setUsername(owner.getEmail());
         user.setFirstName(owner.getFirstname());
         user.setLastName(owner.getLastname());
-        user.setAttributes(Collections.singletonMap("slug", Arrays.asList(owner.getSlug())));
+       // user.setAttributes(Collections.singletonMap("slug", Arrays.asList("first", "second")));
 
         return user;
     }
 
-    private CredentialRepresentation getPassword() {
+    private GroupRepresentation getOwnerGroup(RealmResource resource) {
+        GroupRepresentation coreGroup = resource.groups()
+                                                .groups()
+                                                .stream()
+                                                .filter(groupRepresentation ->
+                                                        groupRepresentation.getName().equals("CORE_GROUP"))
+                                                .findFirst()
+                                                .get();
 
-        CredentialRepresentation passwordCredential = new CredentialRepresentation();
-        passwordCredential.setTemporary(false);
-        passwordCredential.setType(CredentialRepresentation.PASSWORD);
-        passwordCredential.setValue("test");
-
-        return passwordCredential;
+        return coreGroup.getSubGroups()
+                        .stream()
+                        .filter(groupRepresentation ->
+                                groupRepresentation.getName().equals("OWNER"))
+                        .findFirst()
+                        .get();
     }
 }

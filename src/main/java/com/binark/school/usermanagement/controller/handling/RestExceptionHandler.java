@@ -47,7 +47,8 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(ForbiddenException.class)
     protected ResponseEntity<BaseResponse> handleForbiddenRequest(ForbiddenException fe) {
-
+        log.error("exception:     {}", fe.getMessage());
+        fe.printStackTrace();
         BaseResponse body = BaseResponse.builder()
                 .message("Vous essayez d'accéder à quelque chose qui n'existe pas")
                 .error(Boolean.TRUE)

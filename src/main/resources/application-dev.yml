@@ -1,3 +1,8 @@
+resource:
+  server:
+    url: http://localhost:8080
+    realm: school-um
+    realm-uri: http://localhost:8080/realms/school-um
 server:
   port: 8084
   servlet:
@@ -36,17 +41,17 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/sukulu
-          jwk-set-uri: http://localhost:8080/realms/sukulu/protocol/openid-connect/certs
+          issuer-uri: ${resource.server.realm-uri}
+          jwk-set-uri: http://localhost:8080/realms/school-um/protocol/openid-connect/certs
 
       client:
         provider:
           keycloak:
-            authorizationUri: http://localhost:8080/realms/sukulu/protocol/openid-connect/auth
-            tokenUri: http://localhost:8080/realms/sukulu/protocol/openid-connect/token
-            userInfoUri: http://localhost:8080/realms/sukulu/protocol/openid-connect/userinfo
+            authorizationUri: http://localhost:8080/school-um/sukulu/protocol/openid-connect/auth
+            tokenUri: http://localhost:8080/realms/school-um/protocol/openid-connect/token
+            userInfoUri: http://localhost:8080/realms/school-um/protocol/openid-connect/userinfo
             userNameAttribute: preferred_username
-            jwkSetUri: http://localhost:8080/realms/sukulu/protocol/openid-connect/certs
+            jwkSetUri: http://localhost:8080/realms/school-um/protocol/openid-connect/certs
         #            issuerUri: http://localhost:8080/realms/school-dev
         registration:
           keycloak:
@@ -67,14 +72,6 @@ jwt:
 client:
   registration:
     name: keycloak
-
-resource:
-  server:
-    url: http://localhost:8080
-    realm: sukulu
-#  client:
-#    uri: ${iam.uri}
-#    realm: ${iam.realm}
 
 eureka:
   client:

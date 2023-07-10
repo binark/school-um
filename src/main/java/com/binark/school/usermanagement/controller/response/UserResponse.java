@@ -1,13 +1,15 @@
 package com.binark.school.usermanagement.controller.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResponse{
 
     private String email;
@@ -20,7 +22,6 @@ public class UserResponse{
 
     private String username;
 
-    private List<String> roles = new ArrayList<>();
-
-    private List<String> requiredActions = new ArrayList<>();
+    private Set<String> roles = new HashSet<>();
+    private Set<String> schools;
 }

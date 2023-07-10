@@ -11,6 +11,11 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @RequiredArgsConstructor
 @Service
 @Primary
@@ -21,6 +26,30 @@ public class AccountIamManager implements IamManager{
     @Override
     public String createUser(Account account) throws IllegalArgumentException {
         return null;
+    }
+
+    public void addUserSchool(String userId, String schoolSlug) {
+        UserResource userResource = getUserResource(userId);
+        UserRepresentation userRepresentation = userResource.toRepresentation();
+        Map<String, List<String>> attributes = userRepresentation.getAttributes();
+
+        if (attributes == null) {
+            attributes = new HashMap<>();
+        }
+
+        List<String> schools = attributes.get("schools");
+
+        if (schools == null) {
+            schools = Arrays.asList(schoolSlug);
+        } else if (!schools.contains(schoolSlug)) {
+            schools.add(schoolSlug);
+        }
+
+        attributes.put("schools", schools);
+
+        userRepresentation.setAttributes(attributes);
+
+        userResource.update(userRepresentation);
     }
 
     public void activateAccount(String userId, String password) {
