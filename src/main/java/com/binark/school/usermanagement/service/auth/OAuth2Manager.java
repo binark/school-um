@@ -42,6 +42,9 @@ public class OAuth2Manager {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private KeycloakBuilder keycloakBuilder;
+
     public TokenResponse getAccessToken(String username, String password) throws AuthenticationException {
         return this.getAccessToken(username, password, false);
     }
@@ -75,7 +78,7 @@ public class OAuth2Manager {
 
     }
 
-    @Deprecated
+   // @Deprecated
     public UserResponse getUserInfo(String accessToken, String username) throws UserNotFoundException {
 
         Keycloak oAuth2ClientInstance = this.getOAuth2ClientInstance(accessToken);
@@ -100,7 +103,6 @@ public class OAuth2Manager {
                 .username(userRepresentation.getUsername())
                 .firstname(userRepresentation.getFirstName())
                 .lastname(userRepresentation.getLastName())
-                .requiredActions(userRepresentation.getRequiredActions())
                 .build();
 
         return user;
@@ -108,28 +110,23 @@ public class OAuth2Manager {
     }
 
     public Keycloak getOAuth2ClientInstance(String username, String password) {
-        return KeycloakBuilder
-                .builder()
-                .serverUrl(serverUrl)
-                .realm(realm)
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-             //   .grantType("password")
-                .username(username)
-                .password(password)
-                .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).build())
-                .build();
+//        return KeycloakBuilder
+//                .builder()
+//                .serverUrl(serverUrl)
+//                .realm(realm)
+//                .clientId(clientId)
+//                .clientSecret(clientSecret)
+//             //   .grantType("password")
+              return   keycloakBuilder
+                      .grantType("password")
+                      .username(username)
+                      .password(password)
+                      .build();
     }
 
     public Keycloak getOAuth2ClientInstance(String accessToken) {
-        return KeycloakBuilder
-                .builder()
-                .serverUrl(serverUrl)
-                .realm(realm)
-                .clientId(clientId)
-               // .grantType("password")
-                .clientSecret(clientSecret)
-                .authorization(accessToken)
+
+                return keycloakBuilder.authorization(accessToken)
                 .resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).build())
                 .build();
     }

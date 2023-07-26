@@ -6,6 +6,7 @@ import com.binark.school.usermanagement.exception.UserNotFoundException;
 import com.binark.school.usermanagement.repository.AccountRepository;
 import com.binark.school.usermanagement.service.account.AbstractAccountService;
 import com.binark.school.usermanagement.service.account.AccountService;
+import com.binark.school.usermanagement.service.iam.AccountIamManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,19 @@ import java.util.UUID;
 @Slf4j
 public class AccountServiceImpl extends AbstractAccountService implements AccountService {
 
+    private final AccountIamManager accountIamManager;
+
     @Autowired
-    public AccountServiceImpl(AccountRepository repository) {
+    public AccountServiceImpl(AccountRepository repository, AccountIamManager accountIamManager) {
         super(repository);
+        this.accountIamManager = accountIamManager;
+    }
+
+    public void addSchoolToAccount(String accountSlug, String schoolSlug) throws UserNotFoundException {
+
+        Account account = getAccountBySlug(accountSlug);
+
+        accountIamManager.addUserSchool(account.getIamId(), schoolSlug);
     }
 
     @Override

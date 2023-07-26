@@ -3,6 +3,7 @@ package com.binark.school.usermanagement.controller;
 import com.binark.school.usermanagement.controller.request.LoginRequest;
 import com.binark.school.usermanagement.controller.response.BaseResponse;
 import com.binark.school.usermanagement.controller.response.LoginResponse;
+import com.binark.school.usermanagement.controller.response.UserResponse;
 import com.binark.school.usermanagement.exception.AuthenticationException;
 import com.binark.school.usermanagement.exception.UserNotFoundException;
 import com.binark.school.usermanagement.service.auth.AdminLoginService;
@@ -87,16 +88,12 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<BaseResponse> authenticate(@RequestBody LoginRequest loginRequest) throws AuthenticationException {
 
-        LoginResponse response = this.loginService.processLogin(
+        ResponseEntity<BaseResponse> response = this.loginService.processLogin(
                 loginRequest.getUsername(),
                 loginRequest.getPassword(),
                 loginRequest.isRememberMe());
 
-        BaseResponse<LoginResponse> baseResponse = new BaseResponse();
-        baseResponse.setData(response);
-        baseResponse.setMessage("Login successful!");
-
-        return ResponseEntity.ok(baseResponse);
+        return response;
 
     }
 
